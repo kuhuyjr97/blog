@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   frontend:
-    container_name: attendance_front
+    container_name: name_fe
     build:
       context: .
       dockerfile: config/react/Dockerfile
@@ -18,7 +18,7 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: nginx
+    container_name: name_nginx
     ports:
       - "8080:80"
     volumes:
@@ -30,25 +30,25 @@ services:
 
   db:
     image : mysql
-    container_name : mysql
+    container_name : name_sql
     volumes:
       - ./config/mysql/data:/var/lib/mysql
     ports:
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: attendance
+      MYSQL_DATABASE: name
       MYSQL_ROOT_PASSWORD: password
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
+    container_name: name_php
     ports:
       - "3400:80"
     depends_on:
       - db
 
   app:
-    container_name: attendance
+    container_name: name_be
     build:
       context: .
       dockerfile: config/php/Dockerfile
