@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  frontend:
+    container_name: attendance_front
+    build:
+      context: .
+      dockerfile: config/react/Dockerfile
+    volumes:
+      - ./FrontEnd:/usr/src/app
+    ports:
+      - 3000:3000
+    tty: true
+    stdin_open: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    working_dir: /usr/src/app
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - ./BackEnd:/var/www
+      - ./config/nginx/conf.d/:/etc/nginx/conf.d/
+    depends_on:
+      - app
+      - db
+
+  db:
+    image : mysql
+    container_name : mysql
+    volumes:
+      - ./config/mysql/data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: attendance
+      MYSQL_ROOT_PASSWORD: password
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    ports:
+      - "3400:80"
+    depends_on:
+      - db
+
+  app:
+    container_name: attendance
+    build:
+      context: .
+      dockerfile: config/php/Dockerfile
+    volumes:
+      - ./BackEnd:/var/www
+    ports:
+      - "9000:9000"
+    working_dir: /var/www
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - 8025:8025
