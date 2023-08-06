@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   frontend:
-    container_name: blog_fe
+    container_name: blog_front
     build:
       context: .
       dockerfile: config/react/Dockerfile
@@ -18,7 +18,7 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: blog_nginx
+    container_name: nginx
     ports:
       - "8080:80"
     volumes:
@@ -30,25 +30,25 @@ services:
 
   db:
     image : mysql
-    container_name : blog_sql
+    container_name : mysql
     volumes:
       - ./config/mysql/data:/var/lib/mysql
     ports:
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: name
+      MYSQL_DATABASE: blog
       MYSQL_ROOT_PASSWORD: password
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: blog_php
+    container_name: phpmyadmin
     ports:
       - "3400:80"
     depends_on:
       - db
 
   app:
-    container_name: blog_be
+    container_name: blog
     build:
       context: .
       dockerfile: config/php/Dockerfile
