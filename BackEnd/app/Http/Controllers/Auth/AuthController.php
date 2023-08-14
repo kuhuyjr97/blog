@@ -2,52 +2,35 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Enums\ResponseEnum;
+use Exception;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Exceptions\LoginFailException;
-use App\Http\Requests\LoginUserRequest;
-use App\Exceptions\UnauthorizedException;
-use Illuminate\Support\Facades\Log;
-use App\Http\Responses\ErrorResponse;
-use App\Http\Responses\SucceedResponse;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\RegisterUserRequest;
 
 class AuthController extends Controller
 {
-    private Authservice $loginService;
+    private RegisterUserRequest $registerUserRequest;
+    private AuthService $authService;
 
-    public function __construct(AuthService $loginService)
-    {
-        $this->loginService = $loginService;
+   /**
+    * @param AuthService $registerAccountService
+    */
+    public function __construct(AuthService $authService){
+        $this->authService = $authService ;
     }
-    public function login(LoginUserRequest $request): JsonResponse
+
+    public function register(  RegisterUserRequest $request) 
     {
-        $credentials = $request->only('email', 'password');
-        try {
-            $loginResult = $this->loginService->login($credentials['email'], $credentials['password']);
-            $responseBody = [
-                'user' => $loginResult['user'],
-                'token' => $loginResult['token'],
-            ];
-            $response = new SucceedResponse(ResponseEnum::RES_STATUS_SUCCESS, '', ResponseEnum::HTTP_STATUS_SUCCESS);
-            return
-                $response->json($responseBody);
-        } catch (UnauthorizedException $e) {
-            $response = new ErrorResponse($e->getCode(), $e->getMessage(), ResponseEnum::HTTP_STATUS_UNAUTHENTICATED);
-            return $response->json();
-        }
-    }
-    public function logout(Request $request): JsonResponse
-    {
-        Log::info('headers', ['authorization', $request->header('authorization')]);
-        $request->user()->currentAccessToken()->delete();
-        $responseBody = [
-            'message' => ResponseEnum::RES_MSG_SUCCESS,
-        ];
-        $response = new SucceedResponse(ResponseEnum::RES_STATUS_SUCCESS, '', ResponseEnum::HTTP_STATUS_SUCCESS);
-        return $response->json($responseBody);
+     
+        $registerUserDTO = $request->toDTO();
+        $this->authService->register($registerUserDTO);
+        return response()->json([
+            'message' => 'register successfully'
+        ],200);
+        
     }
 }

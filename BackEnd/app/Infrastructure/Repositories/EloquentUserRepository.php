@@ -10,4 +10,15 @@ class EloquentUserRepository implements EloquentUserRepositoryInterface
     {
         return EloquentUser::where('email', $email)->first();
     }
+    public function saveNewUser(string $name, string $email, string $password)
+        {
+            return EloquentUser::create([
+                'name' => $name,
+                'email' => $email,
+                'password' => $password
+            ]);
+        }
 }
+
+
+
