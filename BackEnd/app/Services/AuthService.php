@@ -2,31 +2,27 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Hash;
-use App\Interfaces\EloquentUserRepositoryInterface;
 use App\Enums\ResponseEnum;
+use App\Http\Dto\RegisterUserDTO;
+use Illuminate\Support\Facades\Hash;
 use App\Exceptions\UnauthorizedException;
+use App\Interfaces\EloquentUserRepositoryInterface;
+
 
 class AuthService
 {
-    private $userRepository;
-
-    public function __construct(EloquentUserRepositoryInterface $userRepository)
+    private EloquentUserRepositoryInterface $EloquenUserRepositoryInterface;
+    public function __construct(EloquentUserRepositoryInterface $EloquenUserRepositoryInterface)
     {
-        $this->userRepository = $userRepository;
+        $this->EloquenUserRepositoryInterface = $EloquenUserRepositoryInterface;
     }
 
-    public function login(string $email, string $password): array
+    public function register(RegisterUserDTO $registerUserDTO)
     {
-        $user = $this->userRepository->findByEmail($email);
-        if (!$user || !Hash::check($password, $user->password)) {
-            throw new UnauthorizedException();
-        }
+        // $this->EloquenUserRepositoryInterface->saveNewUser($registerUserDTO->getName(), $registerUserDTO->getEmail(),$registerUserDTO->getPassword());
+        $this->EloquenUserRepositoryInterface->
 
-        $token = $user->createToken('myapptoken')->plainTextToken;
-        return [
-            'user' => $user,
-            'token' => $token,
-        ];
     }
+    
+   
 }

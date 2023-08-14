@@ -13,10 +13,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(\App\Interfaces\WorkingDayOfWeekRepositoryInterface::class, \App\Infrastructure\Repositories\WorkingDayOfWeekRepository::class);
-        $this->app->bind(\App\Interfaces\AttendanceRepositoryInterface::class, \App\Infrastructure\Repositories\AttendanceRepository::class);
-        $this->app->bind(\App\Interfaces\RequestRepositoryInterface::class, \App\Infrastructure\Repositories\RequestRepository::class);
-        $this->app->bind(\App\Interfaces\HolidayRepositoryInterface::class, \App\Infrastructure\Repositories\HolidayRepository::class);
         $this->app->bind(\App\Interfaces\EloquentUserRepositoryInterface::class, \App\Infrastructure\Repositories\EloquentUserRepository::class);
     }
 
