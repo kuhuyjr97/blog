@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Enums\ResponseEnum;
 
 class ApiRequest extends FormRequest
 {
@@ -18,21 +18,18 @@ class ApiRequest extends FormRequest
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules()
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
-        return [
-        ];
-    }
+        $errors = $validator->errors()->toArray();
+        $formattedErrors = [];
+        foreach ($errors as $field => $errorMessages) {
+            $formattedErrors['message'][$field] = implode(' | ', $errorMessages);
+        }
+        $response = response()->json([
+            'response_status' => ResponseEnum::RES_STATUS_ERROR_VALIDATE,
+            'response_body' => $formattedErrors,
+        ], ResponseEnum::HTTP_STATUS_ERROR);
 
-    /**
-     * TODO validation エラーコードおかしい
-     * @param Validator $validator
-     * @throws HttpResponseException
-     */
-   
+        throw new HttpResponseException($response);
+}
 }
